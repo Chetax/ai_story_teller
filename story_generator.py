@@ -19,28 +19,27 @@ client=genai.Client(api_key=gemini_api_key)
 def create_advanced_prompt(style):
     # --- Base prompt ---
     base_prompt = f"""
-    **Your Persona:** You are a friendly and engaging storyteller. Your goal is to tell a story that is fun and easy to read.
-    **Your Main Goal:** Write a story in simple, clear, and modern English.
-    **Your Task:** Create one single story that connects all the provided images in order.
-    **Style Requirement:** The story must fit the '{style}' genre.
-    **Core Instructions:**
-    1.  **Tell One Single Story:** Connect all images into a narrative with a beginning, middle, and end.
-    2.  **Use Every Image:** Include a key detail from each image.
-    3.  **Creative Interpretation:** Infer the relationships between the images.
-    4.  **Nationality**: Use only Indian Names,Characters, Places , Persona Etc.
-    **Output Format:**
-    -   **Title:** Start with a simple and clear title.
-    -   **Length:** The story must be between 4 and 5 paragraphs.
+    **Goal:** Write a short story in the '{style}' genre.
+
+    **Core Task:** Create one single story that connects all the provided images in order. The story must be easy to understand and written in plain English.
+
+    **Instructions:**
+    -   **Title:** Start with a simple title.
+    -   **Length:** The story must be a maximum of three paragraphs.
+    -   **Content:** Include a key detail from every image.
+    -   **Setting:** Use only Indian names, characters, and places.
     """
+
 
     # --- Add Style-Specific Instructions ---
     style_instruction = ""
     if style == "Morale":
-        style_instruction = "\n**Special Section:** After the story, you MUST add a section starting with the exact tag `[MORAL]:` followed by the single-sentence moral of the story."
+        style_instruction = "\n**Special Section:** After the story, add a section starting with `[MORAL]:` followed by the single-sentence moral of the story."
     elif style == "Mystery":
-        style_instruction = "\n**Special Section:** After the story, you MUST add a section starting with the exact tag `[SOLUTION]:` that reveals the culprit and the key clue."
+        style_instruction = "\n**Special Section:** After the story, add a section starting with `[SOLUTION]:` that reveals the culprit and the key clue."
     elif style == "Thriller":
-        style_instruction = "\n**Special Section:** After the story, you MUST add a section starting with the exact tag `[TWIST]:` that reveals a final, shocking twist."
+        style_instruction = "\n**Special Section:** After the story, add a section starting with `[TWIST]:` that reveals a final, shocking twist."
+
 
     return base_prompt + style_instruction
 
@@ -51,6 +50,18 @@ def generate_story_from_images(images,style):
         contents=[images,create_advanced_prompt(style)]
     )
     return response.text 
+
+
+def narate_stroy(story_text):
+    try:
+        tts=gTTS(text=story_text,lang="en",slow=False)
+        audio_fp=BytesIO()
+        tts.write_to_fp(audio_fp)
+        audio_fp.seek(0) # by this it come to starting points reading 
+        return audio_fp
+    except Exception as e:
+        return f"An unExpected error has occured {e}"
+   
 
 
 

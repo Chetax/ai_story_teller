@@ -1,5 +1,5 @@
 import streamlit as st 
-from story_generator import generate_story_from_images
+from story_generator import generate_story_from_images,narate_stroy
 from PIL import Image
 st.title("AI Story Generator from images")
 st.markdown("Upload 1 to 10 images, choose an style and let AI write and narrate an story for you.")
@@ -24,15 +24,15 @@ with st.sidebar:
     generate_button=st.button("Generate Story and Narration",type="primary")
 
 
-    #main Logic to put the data
-
+#main Logic to put the data
+audio_file = None
 if generate_button :
     if not uploaded_files:
         st.warning("Please upload atleast 1 file!")
     elif len(uploaded_files)>10:
         st.warning("Please upload an maximum of 10 images.")
     else:
-        with st.spinner("The Ai is writing and narrating your storty...."):
+        with st.spinner("The Ai is writing and narrating your story...."):
             try:
                 pil_images=[Image.open(uploaded_files) for uploaded_files in uploaded_files]
                 st.subheader("Your visual inspirations:")
@@ -48,6 +48,20 @@ if generate_button :
 
                  st.subheader(f"Your {story_style} story : ")
                  st.success(generate_story)
+                #  st.subheader("Listen to your story : ")
+                #  audio_file=narate_stroy(generate_story)
+                #  if audio_file:
+                #      st.audio(audio_file,format="audio/mp3")
+            except Exception as e:
+                st.error(f"An Application Error {e}")
+
+        
+        with st.spinner("The Ai is creating audio of yours story shortly ...."):
+            try:
+                 st.subheader("Listen to your story : ")
+                 audio_file=narate_stroy(generate_story)
+                 if audio_file:
+                     st.audio(audio_file,format="audio/mp3")
             except Exception as e:
                 st.error(f"An Application Error {e}")
     
